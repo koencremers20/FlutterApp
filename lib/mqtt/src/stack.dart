@@ -1,9 +1,9 @@
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
-import 'package:mqtt_client/src/entry.dart';
-import 'package:mqtt_client/src/segment.dart';
-import 'package:mqtt_client/src/tween.dart';
+import 'package:mqtt_client/mqtt/src/entry.dart';
+import 'package:mqtt_client/mqtt/src/segment.dart';
+import 'package:mqtt_client/mqtt/src/tween.dart';
 
 const double _kMaxAngle = 360.0;
 

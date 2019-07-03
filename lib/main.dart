@@ -3,7 +3,7 @@ import 'package:mqtt_client/fab_bottom_app_bar.dart';
 import 'package:mqtt_client/layout.dart';
 import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 import 'package:flutter/material.dart';
-import 'package:mqtt_client/mqtt_client.dart' as mqtt;
+import 'package:mqtt_client/mqtt/mqtt_client.dart' as mqtt;
 import 'package:mqtt_client/models/message.dart';
 import 'package:mqtt_client/dialogs/send_message.dart';
 import 'package:connectivity/connectivity.dart';

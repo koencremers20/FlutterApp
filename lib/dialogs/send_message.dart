@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mqtt_client/mqtt_client.dart' as mqtt;
+import 'package:mqtt_client/mqtt/mqtt_client.dart' as mqtt;
 
 class SendMessageDialog extends StatefulWidget {
   final mqtt.MqttClient client;

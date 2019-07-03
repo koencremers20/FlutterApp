@@ -1,4 +1,4 @@
-import 'package:mqtt_client/mqtt_client.dart' as mqtt;
+import 'package:mqtt_client/mqtt/mqtt_client.dart' as mqtt;
 
 class Message {
   final String topic;
