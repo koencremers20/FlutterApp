@@ -30,6 +30,9 @@ enum FloatingButtonOptions {
 }  
 
 double _value = 0.0;
+String broker = '10.20.31.152';
+  mqtt.MqttClient client;
+  mqtt.ConnectionState connectionState;
 
 class MyApp extends StatelessWidget {
 
@@ -65,9 +68,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   PageController _pageController;
   int _page = 0;
 
-  String broker = '10.20.31.152';
-  mqtt.MqttClient client;
-  mqtt.ConnectionState connectionState;
+  
 
   StreamSubscription subscription;
 
@@ -249,6 +250,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
 List<String> scenes=[
 "Solid color", "Goodnight",
+"Evening", "Bioscoop",
+ "Goodnight","Solid color", 
+ "Solid color", "Goodnight",
 "Evening", "Bioscoop",
  "Goodnight","Solid color", 
 ];
@@ -583,7 +587,19 @@ class _PostScreenState extends State<PostScreen>
     play();
   }
     
-  void _setvalue(double value) => setState(() => _value = value);
+  void _setvalue(double value)
+  {
+     setState(() => _value = value);
+    _value = value;
+    final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
+
+    builder.addString('$value');
+    client.publishMessage(
+      'scenes',
+      mqtt.MqttQos.values[2],
+      builder.payload
+    );
+  } 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
