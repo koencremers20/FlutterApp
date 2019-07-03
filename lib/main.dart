@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Color pickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
 
-  int _currentScene = 0;
+  int _currentScene = -1;
 
 @override
   void initState(){
@@ -590,10 +590,10 @@ class _PostScreenState extends State<PostScreen>
   void _setvalue(double value)
   {
      setState(() => _value = value);
-    _value = value;
+    
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
-
-    builder.addString('$value');
+    double _tempValue = _value * 100;
+    builder.addString(_tempValue.round().toString());
     client.publishMessage(
       'scenes',
       mqtt.MqttQos.values[2],
