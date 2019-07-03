@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:mqtt_client/fab_with_icons.dart';
 import 'package:mqtt_client/fab_bottom_app_bar.dart';
 import 'package:mqtt_client/layout.dart';
@@ -18,7 +19,7 @@ import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:flutter_colorpicker/utils.dart';
 import 'package:mqtt_client/flutter_circular_chart.dart';
 import 'package:mqtt_client/color_palette.dart';
-
+import 'package:morpheus/morpheus.dart';
 
 //test
 void main() => runApp(MyApp());
@@ -62,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   PageController _pageController;
   int _page = 0;
 
-  String broker = '192.168.1.33';
+  String broker = '10.20.31.152';
   mqtt.MqttClient client;
   mqtt.ConnectionState connectionState;
 
@@ -78,20 +79,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Color pickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
 
-  Timer timer;
-  
-
-  final GlobalKey<AnimatedCircularChartState> _chartKey =
-new GlobalKey<AnimatedCircularChartState>();
-  final _chartSize = const Size(300.0, 300.0);
-  final Math.Random random = new Math.Random();
-List<CircularStackEntry> data;
-
 @override
   void initState(){
     super.initState();
     _pageController = PageController();
-    data = _generateRandomData();
      initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
@@ -102,8 +93,6 @@ List<CircularStackEntry> data;
             }
           });
         });
-     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _randomize());
-   
   }
 
    @override
@@ -111,7 +100,7 @@ List<CircularStackEntry> data;
     _pageController = PageController();
     _connectivitySubscription.cancel();
     subscription?.cancel();
-    timer?.cancel();
+   
     super.dispose();
   }
 
@@ -131,40 +120,22 @@ List<CircularStackEntry> data;
      String _option;
       if(index == FloatingButtonOptions.Shutdown.index)
       {
-        _option = 'Shutdown';
+        _option = '0';
       }
       if(index == FloatingButtonOptions.PowerOn.index)
       {
-        _option = 'Power on';
+        _option = '1';
       }
        builder.addString(_option);
        print(_option);
        client.publishMessage(
-        'test',
+        'power',
         mqtt.MqttQos.values[2],
         builder.payload
       );
     });
   }
-  List<CircularStackEntry> _generateRandomData() {
-    int stackCount = random.nextInt(10);
-    List<CircularStackEntry> data = new List.generate(stackCount, (i) {
-      int segCount = random.nextInt(10);
-      List<CircularSegmentEntry> segments =  new List.generate(segCount, (j) {
-        Color randomColor = ColorPalette.primary.random(random);
-        return new CircularSegmentEntry(random.nextDouble(), randomColor);
-      });
-      return new CircularStackEntry(segments);
-    });
-
-    return data;
-}
-void _randomize() {
-    setState(() {
-      data = _generateRandomData();
-      _chartKey.currentState.updateData(data);
-    });
-}
+  
   @override
   Widget build(BuildContext context) {
     IconData connectionStateIcon;
@@ -272,28 +243,91 @@ void _randomize() {
     );
   }
 
-   Column _buildHomePage() {
-    
+List<String> scenes=[
+"Solid color", "Goodnight",
+"Evening", "Bioscoop",
+ "Goodnight","Solid color", 
+ "Evening", "Bioscoop", 
+ "Goodnight","Solid color",
+   "Evening", "Bioscoop", 
+  "Goodnight", "Solid color", 
+  "Evening", "Bioscoop", 
+  "Goodnight", "Solid color", 
+  "Evening", "Bioscoop",
+  "Evening", "Bioscoop", 
+  "Goodnight", "Solid color", 
+  "Evening", "Bioscoop", 
+  "Goodnight", "Solid color", 
+  "Evening", "Bioscoop"];
+
+
+
+
+void _handleTap(BuildContext context, GlobalKey parentKey, int index) {
+
+
+    final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
+  
+       builder.addString(scenes[index]);
+      
+       client.publishMessage(
+        'scenes',
+        mqtt.MqttQos.values[2],
+        builder.payload
+      );
+     Navigator.of(context).push(MorpheusPageRoute(
+      builder: (context) => Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Container(
+            color: Colors.grey,
+          
+          ),
+          AppBar(
+            backgroundColor: Colors.white,
+            title: Text(scenes[index]),
+          )
+        ],
+      ),
+      ),
+      parentKey: parentKey,
+    ));
+  }
+
+  
+
+   Widget _buildHomePage() {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      itemCount: 29,
+      itemBuilder: (context, index) {
+        final _parentKey = GlobalKey();
+        return ListTile(
+          key: _parentKey,
+          
+          title: new Container(
+            alignment: new FractionalOffset(0.0, 0.5),   
+                child: CircleAvatar(
+                  backgroundImage: ExactAssetImage('images/pic$index.jpg'),
+                  minRadius: 60,
+                  maxRadius: 60,
+                  
+                ),
+                
+              ),
+              subtitle: new Container(
+                alignment: new FractionalOffset(0.35, -0.15),   
+                child: Text(scenes[index])
+            ),
+          onTap: () => _handleTap(context, _parentKey, index),
+        );
+      
+      },
         
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: ListView(
-            // controller: messageController,
-            // children: _buildMessageList(),
-          ),
-        ),
-        Center(
-          child: new AnimatedCircularChart(
-            key: _chartKey,
-            size: _chartSize,
-            initialChartData: data,
-            chartType: CircularChartType.Radial,
-          ),
-        ),
-          ],
     );
   }
+    
+
 
 Column _BuildSettingsPage(IconData connectionStateIcon) {
      return Column(
