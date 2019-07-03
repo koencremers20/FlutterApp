@@ -29,6 +29,8 @@ enum FloatingButtonOptions {
    PowerOn
 }  
 
+double _value = 0.0;
+
 class MyApp extends StatelessWidget {
 
 
@@ -78,6 +80,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Color pickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
+
+  int _currentScene = 0;
 
 @override
   void initState(){
@@ -247,85 +251,64 @@ List<String> scenes=[
 "Solid color", "Goodnight",
 "Evening", "Bioscoop",
  "Goodnight","Solid color", 
- "Evening", "Bioscoop", 
- "Goodnight","Solid color",
-   "Evening", "Bioscoop", 
-  "Goodnight", "Solid color", 
-  "Evening", "Bioscoop", 
-  "Goodnight", "Solid color", 
-  "Evening", "Bioscoop",
-  "Evening", "Bioscoop", 
-  "Goodnight", "Solid color", 
-  "Evening", "Bioscoop", 
-  "Goodnight", "Solid color", 
-  "Evening", "Bioscoop"];
+];
+    double _value = 50.0;
 
+void _handleTap(BuildContext context, GlobalKey parentKey, int index) async {
 
-
-
-void _handleTap(BuildContext context, GlobalKey parentKey, int index) {
-
-
+  if(_currentScene != index )
+  {
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
-  
-       builder.addString(scenes[index]);
-      
-       client.publishMessage(
-        'scenes',
-        mqtt.MqttQos.values[2],
-        builder.payload
-      );
-     Navigator.of(context).push(MorpheusPageRoute(
-      builder: (context) => Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Container(
-            color: Colors.grey,
-          
-          ),
-          AppBar(
-            backgroundColor: Colors.white,
-            title: Text(scenes[index]),
-          )
-        ],
-      ),
-      ),
-      parentKey: parentKey,
-    ));
-  }
 
-  
-
-   Widget _buildHomePage() {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemCount: 29,
-      itemBuilder: (context, index) {
-        final _parentKey = GlobalKey();
-        return ListTile(
-          key: _parentKey,
-          
-          title: new Container(
-            alignment: new FractionalOffset(0.0, 0.5),   
-                child: CircleAvatar(
-                  backgroundImage: ExactAssetImage('images/pic$index.jpg'),
-                  minRadius: 60,
-                  maxRadius: 60,
-                  
-                ),
-                
-              ),
-              subtitle: new Container(
-                alignment: new FractionalOffset(0.35, -0.15),   
-                child: Text(scenes[index])
-            ),
-          onTap: () => _handleTap(context, _parentKey, index),
-        );
-      
-      },
-        
+    builder.addString(scenes[index]);
+    client.publishMessage(
+      'scenes',
+      mqtt.MqttQos.values[2],
+      builder.payload
     );
+    _currentScene = index;
   }
+  Navigator.of(context).push(MorpheusPageRoute(
+    builder: (context) => PostScreen(
+            title: scenes[index],
+            index: index,
+      ),
+    parentKey: parentKey,
+    transitionToChild: false,
+    )
+  );
+}
+
+Widget _buildHomePage() {
+return GridView.builder(
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+  itemCount: scenes.length,
+  itemBuilder: (context, index) {
+    final _parentKey = GlobalKey();
+    return ListTile(
+      key: _parentKey,
+      
+      title: new Container(
+        alignment: new FractionalOffset(0.0, 0.5),   
+            child: CircleAvatar(
+              backgroundImage: ExactAssetImage('images/pic$index.jpg'),
+              minRadius: 60,
+              maxRadius: 60,
+              
+            ),
+            
+          ),
+          subtitle: new Container(
+            alignment: new FractionalOffset(0.35, -0.15),   
+            child: Text(scenes[index])
+        ),
+      onTap: () => _handleTap(context, _parentKey, index),
+    );
+  
+  },
+    
+);
+}
     
 
 
@@ -360,6 +343,7 @@ Column _BuildSettingsPage(IconData connectionStateIcon) {
       ],
     );
     }
+
 Future _connect() async {
     /// First create a client, the client is constructed with a broker name, client identifier
     /// and port if needed. The client identifier (short ClientId) is an identifier of each MQTT
@@ -513,4 +497,138 @@ Future _connect() async {
     }
   }
 
+}
+
+class PostHeader extends StatelessWidget {
+  PostHeader({
+    Key key,
+    this.title,
+    this.index,
+    this.onTap,
+  }) : super(key: key);
+
+  final String title;
+  final VoidCallback onTap;
+   final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 156.0,
+              decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: new ExactAssetImage('images/pic$index.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            ),
+            SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 2.0),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.title,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+class PostScreen extends StatefulWidget {
+  PostScreen({
+    Key key,
+    this.title,
+    this.index,
+  }) : super(key: key);
+
+  final String title;
+  final int index;
+
+  @override
+  _PostScreenState createState() => _PostScreenState();
+}
+
+class _PostScreenState extends State<PostScreen>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller;
+  Animation<double> height;
+  bool display = true;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+    );
+    height = Tween<double>(
+      begin: 0.0,
+      end: 80.0,
+    ).animate(CurvedAnimation(
+      parent: controller,
+      curve: Curves.fastOutSlowIn,
+    ))
+      ..addListener(() {
+        setState(() {});
+      });
+    play();
+  }
+    
+  void _setvalue(double value) => setState(() => _value = value);
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () {
+        controller.reverse();
+        Navigator.of(context).pop();
+      },
+      child: Scaffold(
+        body: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              height: height.value,
+              padding: const EdgeInsets.only(left: 8.0),
+            ),
+            PostHeader(
+              title: widget.title,
+              index: widget.index,
+            ),
+            Container(
+              height: 256.0,
+              alignment: Alignment.center,
+              child: new Column(
+                children: <Widget>[
+                  new Text('Brightness: ${(_value * 100).round()}'),
+                  new Slider(value: _value, onChanged: _setvalue),
+                   
+              ],
+            ),
+        ),
+          ]
+      ),
+    )
+    );
+  }
+  
+
+  void play() {
+    if (mounted) setState(() => display = true);
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
 }
