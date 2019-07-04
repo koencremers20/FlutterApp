@@ -30,7 +30,8 @@ enum FloatingButtonOptions {
 }  
 
 double _value = 0.0;
-String broker = '10.20.31.152';
+// String broker = '10.20.31.152';
+String broker = '192.168.1.33';
   mqtt.MqttClient client;
   mqtt.ConnectionState connectionState;
 
@@ -41,11 +42,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Koen''s App',
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      home: new MyHomePage(title: 'Flutter Demo Home Page'),
+      home: new MyHomePage(title: 'Home'),
     );
   }
 }
@@ -259,8 +260,7 @@ List<String> scenes=[
     double _value = 50.0;
 
 void _handleTap(BuildContext context, GlobalKey parentKey, int index) async {
-
-  if(_currentScene != index )
+if(_currentScene != index && connectionState == mqtt.ConnectionState.connected)
   {
     final mqtt.MqttClientPayloadBuilder builder = mqtt.MqttClientPayloadBuilder();
 
@@ -398,8 +398,8 @@ Future _connect() async {
     /// never send malformed messages.
     try {
       await client.connect();
-    } on SocketException catch(e) {
-      throw e;
+    } on SocketException catch(_) {
+      throw _;
     }
 
     /// Check if we are connected
