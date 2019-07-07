@@ -17,8 +17,8 @@ import 'dart:io';
   }
 
     Mqtt._internal();
-    static String broker = '10.20.31.152';
-    // String broker = '192.168.1.33';
+    // static String broker = '10.20.31.152';
+    String broker = '192.168.1.33';
     static mqtt.MqttClient client;
     static   mqtt.ConnectionState connectionState;
 

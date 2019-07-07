@@ -25,13 +25,6 @@ import 'package:mqtt_client/mqtt/mqtt.dart';
 //test
 void main() => runApp(MyApp());
 
-enum FloatingButtonOptions { 
-   Shutdown,
-   PowerOn
-}  
-
-
-
 class MyApp extends StatelessWidget {
 
   @override
@@ -169,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 List<String> scenes=[
 "Solid color", "Good night",
 "Evening", "Bioscoop",
- "Morning",
+ "Morning", "Effects",
 ];
 
 void _handleTap(BuildContext context, GlobalKey parentKey, int index) async {

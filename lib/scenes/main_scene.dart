@@ -3,7 +3,7 @@ import 'package:mqtt_client/mqtt/mqtt.dart';
 import 'package:mqtt_client/mqtt/mqtt_client.dart' as mqtt;
 import 'package:flutter/material.dart';
 import 'package:mqtt_client/scenes/SolidColor.dart';
-import 'package:mqtt_client/scenes/goodnight.dart';
+import 'package:mqtt_client/scenes/GoodNight.dart';
 import 'package:mqtt_client/main.dart';
 
 class PostHeader extends StatelessWidget {
@@ -68,7 +68,7 @@ class _PostScreenState extends State<PostScreen>
   AnimationController controller;
   Animation<double> height;
   bool display = true;
-  double _value = 0.0;
+
   Mqtt mqtt;
 
  
@@ -102,6 +102,7 @@ class _PostScreenState extends State<PostScreen>
     SolidColor(title: " Evening"),
     GoodNight(title: "Bioscoop"),
     SolidColor(title: "Morning"),
+    SolidColor(title: "Effects"),
 
   ];
 
@@ -117,15 +118,15 @@ class _PostScreenState extends State<PostScreen>
           padding: EdgeInsets.zero,
           children: <Widget>[
             Container(
-              height: height.value,
-              padding: const EdgeInsets.only(left: 8.0),
+            
+              
             ),
             PostHeader(
               title: widget.title,
               index: widget.index,
             ),
             Container(
-              height: 256.0,
+              height: 450,
               alignment: Alignment.center,
               child: widgetList[widget.index],
               
