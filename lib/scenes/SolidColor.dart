@@ -30,28 +30,25 @@ class _SolidColorState extends State<SolidColor>
 // void onChanged(Color value) => this.color=value;
   // int value =0;
   // void onChanged(int value) => this.value=value;
-
-HSVColor color = HSVColor.fromColor(Colors.blue);
-  void onChanged(HSVColor color) {
-     this.color = color;
-     print(color.toColor());
-     print(color);
-      mqtt.sendMessage('HSVColor',color.toString());
-  }
+double brightness = 50;
+Color color = Colors.black;
+void sliderChanged(double value)
+{
+  brightness = value;
+  mqtt.sendMessage('brigtness', brightness.toString());
+}
+void onChanged(Color color) {
+    this.color = color;
+    print(color);
+    
+    mqtt.sendMessage('Color', color.red.toString() + " " + color.green.toString() +" " + color.blue.toString());
+}
 
 @override
   void initState() {
     super.initState();
      mqtt = new Mqtt();
-
   }
-  void _setBrightnessValue(double value)
-  {
-     setState(() => _value = value);
-     double _tempValue = _value * 100;
-     mqtt.sendMessage('slider',_tempValue.round().toString());
-    
-  } 
  
   @override
   Widget build(BuildContext context) {
@@ -67,15 +64,16 @@ HSVColor color = HSVColor.fromColor(Colors.blue);
                 direction: Axis.vertical,
                 children: <Widget>[
                  
-                    new PaletteHuePicker(
+                   new RGBPicker(
                   color: this.color,
                   onChanged: (value)=>super.setState(()=>this.onChanged(value)),
-),
-//                   new PaletteValuePicker(
-//                   color: this.color,
-//                   onChanged: (value)=>super.setState(()=>this.onChanged(value)),
-// ),
+                  ),
+                  //                   new PaletteValuePicker(
+                  //                   color: this.color,
+                  //                   onChanged: (value)=>super.setState(()=>this.onChanged(value)),
+                  // ),
                   new Divider(),
+                  new Slider(value: brightness, onChanged: sliderChanged,),
                   // new WheelPicker(
                   //               color: this.color,
                   //               onChanged: (value) =>

@@ -26,10 +26,9 @@ class _GoodNightState extends State<GoodNight>
   Animation<double> height;
   bool display = true;
   Mqtt mqtt;
-   int _selectedColorIndex = 0;
-   Duration timer = const Duration();
-   DateTime _dateTime;
-    String _format = 'HH:mm';
+  Duration timer = const Duration();
+  DateTime _dateTime;
+  String _format = 'HH:mm';
   TextEditingController _formatCtrl = TextEditingController();
 
 //    Color color =Colors.blue;
