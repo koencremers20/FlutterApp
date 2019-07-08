@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# FlutterApp
-=======
+
 # mqtt_client
 
 A new Flutter project.
