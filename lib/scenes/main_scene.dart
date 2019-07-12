@@ -4,6 +4,7 @@ import 'package:mqtt_client/mqtt/mqtt_client.dart' as mqtt;
 import 'package:flutter/material.dart';
 import 'package:mqtt_client/scenes/SolidColor.dart';
 import 'package:mqtt_client/scenes/GoodNight.dart';
+import 'package:mqtt_client/scenes/Effects.dart';
 import 'package:mqtt_client/main.dart';
 
 class PostHeader extends StatelessWidget {
@@ -102,7 +103,7 @@ class _PostScreenState extends State<PostScreen>
     SolidColor(title: " Evening"),
     GoodNight(title: "Bioscoop"),
     SolidColor(title: "Morning"),
-    SolidColor(title: "Effects"),
+    EffectsPage(title: "Effects"),
 
   ];
 

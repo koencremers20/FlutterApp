@@ -34,8 +34,8 @@ double brightness = 50;
 Color color = Colors.black;
 void sliderChanged(double value)
 {
-  brightness = value;
-  mqtt.sendMessage('brigtness', brightness.toString());
+   setState(() => brightness = value);
+  mqtt.sendMessage('brightness', brightness.round().toString());
 }
 void onChanged(Color color) {
     this.color = color;
@@ -73,7 +73,12 @@ void onChanged(Color color) {
                   //                   onChanged: (value)=>super.setState(()=>this.onChanged(value)),
                   // ),
                   new Divider(),
-                  new Slider(value: brightness, onChanged: sliderChanged,),
+                  new Slider( 
+                    min: 0.0,
+                    max: 100.0,
+                    value: brightness, 
+                    onChanged: sliderChanged,
+                  ),
                   // new WheelPicker(
                   //               color: this.color,
                   //               onChanged: (value) =>
